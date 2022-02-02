@@ -1,0 +1,14 @@
+---
+title: "Intro to GitHub"
+author: "Patrick Burke"
+date: "2/1/2022"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+
+ggplot(data = mtcars, aes(x = mpg)) + 
+  geom_histogram(color = "black", fill = "white", bins = 15)
+
+```
