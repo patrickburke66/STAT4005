@@ -1,0 +1,47 @@
+---
+title: "Section 8"
+author: "Patrick Burke"
+date: "2/3/2022"
+output: html_document
+---
+##Section 8 Notes
+
+#Section 8.1.2
+
+#Exercise 1
+
+The "Stand Your Ground" graph is extremely unethical. Especially when talking about an issue such as guns, and gun deaths, it is unethical to create an intentionally misleading graph. The graph has a Y-axis which counts oppositely, with the largest values at the bottom. This is trying to present that gun deaths have gone down when they actually have gone up.
+
+#Exercise 2
+
+One of the principles, number 11, states that one should respect the privacy of their subjects/data. I think this is an important one, especially in an internet age where privacy is hard to find. I think this is something we even see in classes, our Statistics professors frequently have us take surveys at the beginning of the semester. I have found that when this data is used in class they always follow the principle of maintaining everyone's privacy in the data set.
+
+Another principle is the importance of having diverse teams. This is important for many reasons. Everyone comes from a different background, so having a team with a larger range of upbringings creates a group which is more likely notice different trends. Say your company is doing some sort of predictive analysis, having more diversity inhibits different opinions and ideas, strengthening your analysis.
+
+#Exercise 3a
+
+I found a graph which showed a line graph over time with COVID cases for vaccinated and un-vaccinated. The un-vaccinated graph was on average 16x higher than the vaccinated, according to the graphic. 
+
+#Exercise 3b
+
+I found a graph which showed myocarditis cases before the vaccine and after. This graph was extremely misleading as it showed nearly zero cases all years before, the 11,000 cases in 2021. First of all, it was misinformation as the actual number is around 2,000. Another reason it is misleading is because myocarditis is also caused by COVID, skewing the numbers.
+
+#Section 8.2
+
+#Exercise 1
+
+Initially I thought the red graph from Example 1 better humanized the lynchings, but I believe the fact you can click on every dot and see the names makes Example 2 stronger. Example 1 was an easier map to visualize, and ran smoother, with a few specific examples of lynchings. But if you are looking for which humanized the issue better, I believe Example 2.
+
+#Exercise 2
+
+A way you could make a static graph which provided similar impact as the first two could be to try and represent how lynchings affected the Black-American population. Maybe a line graph is less impactful than a map graphic, but I think if there were to be some sort of line graph which clearly shows the number of lives lost and impact on certain communities then it could remind people of the horrible human impact this had.
+
+#Exercise 3
+
+My initial takeaway was that it is disappointing that a bot trying to gain exposure and interactions best does so through hate speech. While this appears to be partially true, the fault of the bot becoming racist is also put on the developers. It is clear that they did not examine closely enough the biases and racist possibilities for their bot. I think that maybe with a more diverse team, or a team with more attention to this side of the ethics might have caught this problem.
+
+#Exercise 4
+
+This visualization better captures the emotions than statements of straight numbers or simple graphs because it paints a picture of what those numbers really mean. It shows the impact of a life lost, The visualization, for me, made me think of someone I know potentially dying at said age, whereas a simple bar chart did not draw that from me.
+
+
