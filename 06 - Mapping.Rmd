@@ -1,0 +1,54 @@
+---
+title: "06 - Mapping"
+author: "Patrick Burke"
+date: "2/7/2022"
+output: html_document
+---
+##Init
+```{r}
+library(maps)
+library(tidyverse)
+state_df <- ggplot2::map_data("state")
+```
+
+##Plot
+```{r}
+ggplot(data = state_df,
+            mapping = aes(x = long, y = lat,
+                          group = group)) +
+  geom_polygon() 
+```
+
+##
+```{r}
+library(usdata)
+state_stats
+```
+
+##
+```{r}
+library(mapproj)
+state_stats <- state_stats %>% mutate(state = str_to_lower(state))
+state_full <- left_join(state_df, state_stats, by = c("region" = "state"))
+
+ggplot(data = state_full, aes(x = long, y = lat, group = group)) +
+  geom_polygon(colour = "black", aes(fill = coal)) +
+  coord_map() +
+  theme_void() +
+  scale_fill_viridis_b()
+```
+
+#Exercise 1
+
+```{r}
+state_full <- state_full %>%
+  mutate(pop_change = 100 * (pop2010 - pop2000) / pop2010)
+
+ggplot(data = state_full, aes(x = long, y = lat, group = group)) +
+  geom_polygon(colour = "black", aes(fill = pop_change)) +
+  coord_map() +
+  theme_void() +
+  scale_fill_brewer(type = "div", direction = -1)
+```
+
+
