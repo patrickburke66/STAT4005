@@ -20,3 +20,47 @@ df_major <- df_long %>%
   filter(type == "major1" | type == "major2" | type == "major3")
 ```
 
+##Question 1
+```{r}
+question1_df <- df_major %>%
+  group_by(discipline)%>%
+  summarise(major_count = n())%>%
+  mutate(majors_ordered = fct_reorder(.x = major_count, .f = discipline))%>%
+  filter(!is.na(discipline))
+
+question1_df2 <- question1_df %>%
+  filter(major_count > 106)
+
+ggplot(question1_df2, aes(x = majors_ordered, y = major_count)) +
+  geom_point() +
+  geom_segment(aes(x = majors_ordered, xend = majors_ordered,
+                   y = 0, yend = major_count)) + 
+  coord_flip() +
+  labs(x = "Majors", y = "Student Count")
+  
+```
+
+##Question 2
+
+```{r}
+question2_df <- df %>%
+  filter(major1 == "STAT" | major2 == "STAT" | major3 == "STAT")
+
+question2_df2 <- question2_df %>%
+  filter(!is.na(minor1)) %>%
+  group_by(minor1, minor2) %>%
+  summarise(minorcount = n()) %>%
+  mutate(minor_ordered = fct_reorder(.f = minor1, .x = minorcount))
+
+ggplot(question2_df2, aes(x = minor_ordered, y = minorcount)) +
+  geom_col() + 
+  coord_flip() + 
+  scale_fill_viridis_d() +
+  labs(x = "Minors Paired with Statistics", y = "Count")
+```
+
+## Question 3
+
+
+
+
