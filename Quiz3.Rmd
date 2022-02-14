@@ -1,0 +1,27 @@
+---
+title: "Quiz 3"
+author: "Patrick Burke"
+date: "2/14/2022"
+output: html_document
+---
+
+##Quiz 3 In-Class
+
+#Question 1
+
+The reason this will not work is because if you edit your README file, or edit anything on the Github webspace, then you have to pull that to RStudio before you can push/commit anything to Github. Since the README file was edited, RStudio can not commit anything new without pulling the edits to README first.
+
+#Question 2
+
+One advantage of Github is the ability to track your progress. With pushes and commits you can save various editions of your code to Github, which can help with tracking progress and being able to go back to how the code was, if there were any errors. This keeps projects organized and easy to check your work.
+
+Another example is the sharing of your code. One thing I have noticed, in SLU connect events and on job applications is a lot of people give you the option to submit your Github link showing projects you have completed. This is important for using as a portfolio, but also sharing code with the public can make it easy to get help, or someone else could create something cool using your code.
+
+#Question 3
+
+I believe for myself the hardest would be the principle covering changing methods and conclusions throughout the project. I think that this is something I am capable of to solve a problem, but I find that often if I get my idea, or my hypothesis, I frequently will lose myself in it, and miss certain important conclusions because of confirmation bias. One example of this ethically would be a dataset dealing with some sort of Affirmative Action dataset. If a Data Scientist who's political opinions are against Affirmative Action, there's a possibility said Data Scientist could come into the dataset with preconceived notions, trying to prove their personal beliefs instead of analyzing the data honestly.
+
+#Question 4
+
+The example that the authors of Data Feminism used was the example we looked at on our homework, with a parabolic projectile signifying the life span of a person, but while on the arc the life falls out of the sky. This represents the brutal truth of gun violence, it takes away length of life of perfectly healthy people. A graphic like this which not only represents the data but shows quantatively the impact that guns have on lives makes you think. The data points connect you to a person, even as they are just dots. 
+
