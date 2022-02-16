@@ -1,0 +1,39 @@
+---
+title: "Take Home 4"
+author: "Patrick Burke"
+date: "2/16/2022"
+output: html_document
+---
+
+```{r}
+library(leaflet)
+library(tidyverse)
+library(maps)
+```
+
+Take Home Quiz #4
+Patrick Burke
+2/16
+
+```{r}
+us_df <- us.cities
+```
+
+```{r}
+capitals_df <- us_df %>%
+  filter(capital == 2)
+
+us_map<- leaflet(us_df) %>%
+  setView(lng = -98.583, lat = 39.833, zoom = 3.5) %>% 
+  addTiles() %>% 
+  addProviderTiles(providers$Wikimedia) %>% 
+  addMarkers(lng = capitals_df$long, lat = capitals_df$lat,
+             popup = paste(capitals_df$name,"<br>",
+                           capitals_df$pop))
+
+us_map
+
+```
+
+
+
