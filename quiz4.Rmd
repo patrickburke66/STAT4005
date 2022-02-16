@@ -1,0 +1,25 @@
+---
+title: "Quiz 4"
+author: "Patrick Burke"
+date: "2/16/2022"
+output: html_document
+---
+```{r}
+library(tidyverse)
+library(here)
+library(mapproj)
+alcohol_df <- read_csv(here("data/alcohol.csv"))
+```
+
+Question 1
+```{r}
+map("world" + coord_map("albers", lat0=30, lat1=40)
+    
+alcohol_df <- alcohol_df %>%
+  mutate(region = country)
+
+alcohol_lat <- world %>%
+  group_by(region)%>%
+  left_join(alcohol_df, world, by = "region")
+```
+
