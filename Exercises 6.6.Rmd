@@ -1,0 +1,81 @@
+---
+title: "Section 7.2"
+author: "Patrick Burke"
+date: "2/16/2022"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(mapproj)
+library(maps)
+hpi_df <- read_csv("data/hpi-tidy.csv")
+```
+
+#Exercise 1
+```{r}
+map("world", projection = "mercator", wrap = TRUE) 
+
+worldmap <- map_data("world")
+
+hpi_world <- left_join(x = worldmap, y = hpi_df, 
+                       by = c("region" = "Country"))
+
+hpi_world <- hpi_world %>%
+  filter(!is.na(hpi_world$LifeExpectancy))
+```
+
+```{r}
+map1 <- ggplot(data = hpi_world, aes(x = long, y = lat, group=group)) +
+  geom_polygon(aes(fill = HappyLifeYears), color = "black")
+map1
+```
+
+#Exercise 2
+```{r}
+hpi_world2 <- left_join(x = worldmap, y = hpi_df, 
+                       by = c("region" = "Country"))
+
+map2 <- ggplot(data = hpi_world2, aes(x = long, y = lat, group=group)) +
+  geom_polygon(aes(fill = HappyLifeYears), color = "black")
+
+map2
+
+```
+
+
+#Exercise 3
+
+I did not have to deal with this until exercise 5, so I you can see me fix that map down there.
+
+
+#Exercise 4
+
+I think this is a very interesting phenomenon. The fact that Africa is 550 times the size of Greenland, but on a map they appear as near equivalents is shocking.The same is visible with the United States and South America.
+
+
+#Exercise 5
+```{r}
+map3 <- ggplot(data = hpi_world2, aes(x = long, y = lat, group=group)) +
+  geom_polygon(aes(fill = HappyLifeYears), color = "black") +
+  coord_map(projection = "globular")
+map3
+```
+
+```{r}
+map4 <- ggplot(data = hpi_world2, aes(x = long, y = lat, group=group)) +
+  geom_polygon(aes(fill = HappyLifeYears), color = "black") +
+  coord_map(projection = "gilbert")
+map4
+```
+Now I got the two horizontal lines!
+
+
+```{r}
+map5 <- ggplot(data = hpi_world2, aes(x = long, y = lat, group=group)) +
+  geom_polygon(aes(fill = HappyLifeYears), color = "black") +
+  coord_map("gilbert", xlim=c(-180,180))
+map5
+```
+And, fixed. It is interesting with the Gilbert projection, Africa and Greenland look closer in size than in the Globular projection. I believe the Globular projection is most likely more accurate, as I can see that if Greenland were to fit in Africa 550 times, it would have to be seen as is in the Globular projection.
