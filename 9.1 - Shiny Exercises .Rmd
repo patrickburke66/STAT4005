@@ -1,0 +1,19 @@
+---
+title: "Exercises Section 9.1"
+author: "Patrick Burke"
+date: "2/22/2022"
+output: html_document
+---
+# Exercise 1
+
+For this shiny app we can either change the number of cases, the y intercept or slope for the regression line, and the standard deviation of the residuals. Through changing this, we can change how steep the growth is, where the line begins or even the R^2 value for the regression model.
+
+# Exercise 2
+
+The outputs of the graph are tables and graphs. The graphs are at the center, but with every change to the sliders a table appears with either the ANOVA summary, on the `Sources of Variation` tab and a regression model summary on the `Regression Results` tab.
+
+# Exercise 3
+
+I chose the FIFA World Cup Player Birth map. It interested me for a few reasons. First off, the United States did not play in this World Cup. So it was interesting to see there were still a player who was born in the United States. In fact, almost every team has players born in other countries. The app lets you choose countries from a drop-down menu and the map displays with bubbles the birth location of that country's players. One nice organization feature is that since it is based off of the World Cup, the drop down menu organizes the countries by their respective round-robin group in the World Cup. I'm sure if this app existed during the 2018 tournament it would have been even more interesting to use. The output of the map, which is very easily zoomable, also allows for hovering to see the players name of their point on the map. This output is all really easy to use, when I found with my map on `leaflet` was not as user friendly.
+
+
