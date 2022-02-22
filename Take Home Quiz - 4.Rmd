@@ -1,0 +1,89 @@
+---
+title: "Take Home Quiz - 5"
+author: "Patrick Burke"
+date: "2/22/2022"
+output: html_document
+---
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(readxl)
+stat113_df <- read_xlsx("data/stat113_survey.xlsx")
+```
+
+# Exercise 1
+
+```{r}
+stat113_mean <- stat113_df %>%
+  filter(Facebook != "NA")
+
+stat113_mean <- stat113_mean %>%
+  mutate(Facebook = as.integer(Facebook))
+
+stat113_mean <- stat113_mean %>%
+  group_by(time_both)%>%
+  summarise(friendmean = mean(Facebook))
+
+stat113_df1 <- stat113_df %>%
+  filter(Facebook != "NA") %>%
+  mutate(Facebook = as.integer(Facebook))
+
+
+stat113_df1$time_both <- ordered(stat113_df1$time_both, 
+                                 levels = c("S13", "F13", "S14", "F14", "S15", 
+                                            "F15", "S16", "F16", "S17", "F17", 
+                                            "S18", "F18", "S19", "F19", "S20", 
+                                            "F20", "S21", "F21"))
+```
+Here I set up my data sets to have an average amount of Facebook friends for the graph.
+
+```{r}
+ggplot(data = stat113_df1, aes(x = time_both, y = Facebook)) +
+  geom_point(alpha = .3, color = "darkgray") +
+  coord_flip() +
+  geom_point(data = stat113_mean, 
+             mapping = aes(x = time_both, y = friendmean, 
+                           color = "green")) +
+  labs(x = "Semester", y = "Number of Facebook Friends", color = "Semester Average")
+
+
+
+```
+
+Here is a graph that shows the variability of Facebook friends, as well as the average amount of friends per semester. You can see in this graph that the average Stat-113 student's Facebook friends have shrunk over recent years.
+
+# Exercise 2
+
+```{r}
+stat113_df <- stat113_df %>%
+  mutate(Facebook = as.integer(Facebook))
+
+stat113_df2 <- stat113_df %>%
+  mutate(FacebookCount = Facebook) %>%
+  mutate(FacebookCount = as.integer(FacebookCount))
+
+stat113_df2 <- stat113_df2 %>%
+  mutate(FacebookCount = ifelse(Facebook > 0, 
+                                TRUE, FALSE)) %>%
+  mutate(FacebookCount = ifelse(is.na(FacebookCount), FALSE, TRUE))
+
+stat113_count <- stat113_df2 %>%
+  group_by(time_both) %>%
+  mutate(FacebookProp = sum(FacebookCount == TRUE) / 5322) %>%
+  filter(!is.na(time_both))
+
+stat113_count$time_both <- ordered(stat113_count$time_both, 
+                                 levels = c("S13", "F13", "S14", "F14", "S15", 
+                                            "F15", "S16", "F16", "S17", "F17", 
+                                            "S18", "F18", "S19", "F19", "S20", 
+                                            "F20", "S21", "F21"))
+```
+
+```{r}
+ggplot(stat113_count, aes(x = time_both, y = FacebookProp, color = time_semester)) +
+  geom_col() +
+  labs(x = "Semester", y = "Proportion of Facebook Users", color = "Which Semester")
+```
+
+Here is my final graph. This graph shows us the proportion of Facebook users among STAT-113 students throughout the years. We can see, as we saw in the previous graph of averages, that Facebook is past its peak; however, we can see there has been a larger proportion of Facebook users than before in the Fall of 2021.
+
