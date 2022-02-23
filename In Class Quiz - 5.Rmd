@@ -1,0 +1,45 @@
+---
+title: "In Class Quiz 5"
+author: "Patrick Burke"
+date: "2/23/2022"
+output: html_document
+---
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE}
+library(tidyverse)
+library(here)
+library(readr)
+library(dplyr)
+```
+
+
+# Exercise 1
+
+I believe the first graph, with `count` on the Y axis is the correct graph. I dont believe it makes sense to put the average bill length on the Y axis for a bar graph as then it is not showing the quantity of something, but rather a singular data point. For this, I believe the correct graph is the first graph.
+
+
+# Exercise 2
+
+```{r}
+##install.packages("here")
+
+hpi_df <- read_csv(here("data/hpi-tidy.csv"))
+
+hpi_df <- hpi_df %>%
+  mutate(GovernanceRank = as.integer(GovernanceRank))
+
+hpi_graph <- hpi_df %>%
+  filter(!is.na(GovernanceRank))
+
+hpi_graph <- hpi_graph %>%
+  group_by(Region) %>%
+  summarise(GovernanceMean = mean(GovernanceRank))
+```
+
+```{r}
+ggplot(data = hpi_graph, aes(x = Region, y = GovernanceMean)) +
+  geom_col() +
+  coord_flip()
+```
+
+
