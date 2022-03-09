@@ -1,0 +1,257 @@
+---
+title: "Midterm Exam"
+author: "Patrick Burke"
+date: "3/9/2022"
+output: html_document
+---
+# Take Home Exam
+
+## Exercise 1
+```{r}
+library(tidyverse)
+pokemon_df <- read_csv("~/SLU/SP2022/Stat-4005/STAT4005/data/pokemon_full.csv")
+pokemon_type <- pokemon_df %>% group_by(Type) %>% summarise(type_count = n())
+
+ggplot(data = pokemon_type, aes(x = Type, y = type_count)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Type",
+       y = "Count") +
+  coord_flip()
+```
+
+#### 1a)
+
+In this graph, <STAT>, <DATA>, <COORDINATE_FUNCTION>, <GEOM_FUNCTION>, and <MAPPINGS>.
+
+STAT is shown within `geom_bar` by `stat = "identity"`
+DATA is shown at the beginning, classifying the df for the plot
+COORDINATE_FUNCTION is seen with`coord_flip`
+GEOM_FUNCTION is represented by `geom_bar`
+MAPPINGS is represented with `aes()` and the `x` and `y` functions inside of it.
+
+#### 1b)
+
+One reason to re-order this bar chart by the count is to make it easier to read for the given audience. There are large populations in the world with less technological experience, or even less experience reading data visualizations in general. By reording them in descending order, it eliminates the need to read the axes and search for the largest value. This allows the graph to be more accessible to all, even those who may not have read many plots. This applies to the principle of presenting work so others can best understand it and draw accurate conclusions from the visualization. If a statistician cared about these principles, and truthfully wanted to present their work best way for others, then they would re-order the graph.
+
+#### 1c)
+
+The reason why eliminating 0, or changing the axis, in a bar chart would be a problem is because it can change the sizes of the bars, and thus the visual impact of the data. If the author of the plot is trying to create a graph portraying a small change between bar sizes, they could change where the axis starts, creating smaller bars and changing the perspective. This is shown with a line graph in the Data Visualization reading. When the axis is at 0, the graph looks like a small change over time. When the axis is changed, the change in the line over time looks enormous. This doesn't effect point plots because they do not rely as heavily on distance from the axis. When demonstrating a count in a bar chart, the distance from the axis represents the amount of data. A point's distance from the axis can change without skewing the view of the graph in the way it does for bar or box plots.
+
+## Exercise 2
+
+Pushed...
+
+## Exercise 3
+
+One thing I have learned about Data Ethics is that it is even possible to see larger news sources using ethically questionable graphs. The Data Visualization reading featured skewed graphs from The New York Times, and that made me think about how important it is to think critically about a graph before sharing it or believing it as fact. I know that I learned this because the other day I saw a chart which stated that New Zealand was leading the world in COVID cases. Knowing how COVID has been there, I was shocked. However, this graph was showing percent change over the past select time period, and was likely cherry picked to represent what the author desired. I have found this part of Data Ethics to be applicable to my everyday life.
+
+## Exercise 4
+
+```{r}
+library(maps)
+library(here)
+state_df <- ggplot2::map_data("state")
+election_df <- read_csv(here("~/SLU/SP2022/Stat-4005/STAT4005/data/2020_county_pres.csv")) %>%
+  group_by(state_name) %>%
+  summarise(total_gop = sum(votes_gop),
+            total_dem = sum(votes_dem)) %>%
+  mutate(percent_gop = 100 * total_gop / (total_gop + total_dem)) %>%
+  mutate(state_name = str_to_lower(state_name))
+
+election_df <- left_join(state_df, election_df, by = c("region" = "state_name"))
+```
+
+#### 4a)
+
+```{r}
+ggplot(data = election_df, aes(x = long, y = lat, group = group)) +
+  geom_polygon(aes(fill = percent_gop), colour = "black") +
+  coord_map(projection = "albers", lat0 = 39, lat1 = 45) +
+  theme(axis.text = element_blank()) +
+  theme_void() +
+  scale_fill_distiller(type = "div", direction = 1) +
+  labs(title = "Percent Voted for Trump")
+```
+
+#### 4b)
+
+The data set is much much longer than 50 rows because R uses latitude and longitude to map out the states onto the x,y plane. There is no single latitude and longitude value that can represent the area of a whole state, each section of a state has its unique longitude and latitude. Due to this, we have to have a dataset that has enough values to get the longitudes and latitudes for all of the borders.
+
+
+## Exercise 5
+
+```{r}
+alcohol_df <- read_csv("~/SLU/SP2022/Stat-4005/STAT4005/data/alcohol.csv")
+
+library(shiny)
+
+var_choices <- names(alcohol_df)[2:4]
+
+
+ui <- fluidPage(
+  sidebarLayout(sidebarPanel(
+    selectizeInput("countrychoice",
+                   label = "Choose a Country", 
+                   choices = levels(factor(alcohol_df$country)),
+                   selected = "USA")),
+    mainPanel(plotOutput("scattergraph"))
+  ),
+    sidebarLayout(sidebarPanel(
+    radioButtons("alcoholchoice",
+                   label = "Choose a Type of Alcohol", 
+                   choices = var_choices)),
+    mainPanel(plotOutput("histograph"))
+  )
+)
+
+server <- function(input, output, session) {
+  
+  df_sub <- reactive({
+    alcohol_df %>% filter(country == input$countrychoice)
+  })
+  
+  scatter_plot <- reactive({
+    ggplot(alcohol_df, aes(x = wine_servings, y = beer_servings)) +
+      geom_point(colour = "black", fill = "white", bins = 15) +
+      geom_point(data = df_sub(), aes(x = wine_servings, y = beer_servings,
+                                      color = country, label = country)) +
+      geom_text(data = df_sub(), aes(label = country), hjust=0, vjust=0)
+  })
+  
+  
+  output$scattergraph <- renderPlot({
+    scatter_plot()
+  })
+  
+  df_sub2 <- reactive({
+    alcohol_df %>% select(input$alcoholchoice)
+  })
+  
+  hist_plot <- reactive({
+    ggplot(df_sub2(), aes(x = .data[[input$alcoholchoice]])) +
+      geom_histogram(colour = "black", fill = "white", bins = 15)
+  })
+  
+  output$histograph <- renderPlot({
+    hist_plot()
+  })
+}
+
+shinyApp(ui, server)
+```
+
+
+## Exercise 6
+
+```{r, eval=FALSE}
+ui <- fluidPage(
+  radioButtons("input1"),
+  selectInput("input2"),
+  numericInput("input3"),
+  plotOutput("output1"),
+  tableOutput("output2")
+)
+
+server <- function(input, output, session) {
+  
+  df <- tibble(xvar = c(1, 2, 3), yvar = c("a", "b", "c"))
+  
+  newval <- reactive({
+    input$input1 - input$input2
+  })
+  
+  anotherval <- reactive({
+    log(input$input1)
+  })
+  
+  output$output1 <- renderPlot({
+    plot(newval())
+  })
+  
+  output$output2 <- renderTable({
+    table(df[[input$input3]])
+  })
+}
+
+shinyApp(ui, server)
+```
+
+## Exercise 7
+
+```{r}
+wta_df <- read_csv("~/SLU/SP2022/Stat-4005/STAT4005/data/wta_matches_2019.csv")
+
+wta_long <- wta_df %>% pivot_longer(c(winner_name, loser_name),
+                                    names_to = "won_or_lost",
+                                    values_to = "player") %>%
+  select(won_or_lost, player, everything())
+
+wta_ace <- wta_long %>%
+  group_by(player) %>%
+  mutate(playeraces = ifelse(won_or_lost == "winner_name",
+                             w_ace,
+                             l_ace))
+
+wta_games <- wta_ace %>%
+  group_by(player)%>%
+  summarise(n = n())
+
+
+wta_games <- wta_games %>%
+  group_by(player)%>%
+  summarise(games = sum(n)) 
+
+wta_games <- wta_games %>%
+  filter(games > 20)
+
+
+wta_ace <- wta_ace %>%
+  group_by(player) %>%
+  summarise(aces = sum(playeraces))
+
+wta_topace <- wta_ace %>%
+  arrange(desc(aces))
+
+wta_all <- semi_join(wta_ace, 
+                     wta_games, 
+                     by = c("player" = "player"))
+
+wta_all <- left_join(wta_all,
+                     wta_games,
+                     by = c("player" = "player"))
+
+wta_all <- wta_all %>%
+  filter(aces > 201)
+
+```
+
+```{r}
+ggplot(wta_all, aes(x = player, y = aces)) +
+  geom_point() +
+  coord_flip() +
+  geom_segment(data = wta_all, aes(x = player, y = 0, xend = player, 
+                                   yend = aces, color = "segment" ))
+```
+
+## Exercise 8
+
+#### 8a)
+
+One reason it is not good to only use this plot is it lacks variability.  Showing the average over one year eliminates the variability of the aces, and does not provide a full scope of each player. This plot only shows the singular average value, which could be skewed by outlier games with large amounts of aces.
+
+#### 8b)
+
+The best way to change this plot would be to make some sort of `geom_violin`, `geom_boxplot` or even a `geom_point`, but have the points display all the different ace amounts per game throughout a season. This could also show the average still, and accomplish more than the firt graph did as well.
+
+
+
+
+
+
+
+
+
+
+
+
+
