@@ -1,0 +1,395 @@
+---
+title: "Take Home Midterm"
+author: "Patrick Burke"
+date: "3/9/2022"
+output: html_document
+runtime: shiny
+---
+
+## Section 1 - Data Visualization
+
+### Introduction
+Visualizing Data has become an essential part of media and storytelling as technology has improve. News stories use plots to represent the story, companies create graphs to illustrate trends, data visualization has become an essential part of explaining complex problems through concise, understandable imagery. Although these visualizations are swift methods to tell a visual story, it is key to look at plots with scrutiny, as there are aspects of data visualization which can be skewed and twisted to promote a certain idea or hypothesis. As we review the essentials of data visualization, we will analyze the important ethical aspects of representing data, along with the different techniques to make eye-catching representations.
+
+### Grammar of Graphics
+
+The Grammar of Graphics are important to understand in order to master plotting and visualizing the nuances of data. Here, we are going to review them and their purpose. To start, I made this chart with our `pokemon_df` data set to demonstrate the different abilities.
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+fitness_df<- read_csv("~/SLU/SP2022/Stat-4005/STAT4005/data/higham_fitness_clean.csv")
+fitness_df <- fitness_df %>%
+  mutate(stepgoal = as.factor(stepgoal))
+```
+
+```{r}
+ggplot(data = fitness_df, aes(x = month, y = active_cals)) +
+  geom_col()
+```
+
+
+* `<DATA>`: the data set
+    +	Simply the data that is used in the plot. It is the data that is being visualized,      seen above as the first argument in `ggplot()`
+    
+    
+*	`<MAPPINGS>`: an aesthetic mapping
+    +	The (x, y) positioning, and customization features such as color, fill, shape, and      group.
+    + One thing we could map onto this graph is a categorical variable to color the bars     by. This is done with the `fill` argument of `<MAPPING>`, and setting it to a           variable.
+    
+```{r}
+ggplot(data = fitness_df, aes(x = month, y = active_cals)) +
+  geom_col(aes(fill = stepgoal))
+```
+    
+    
+*	`<GEOM_FUNCTION>`: a geometrical object
+    + The geometric object, the plot that is being used. In the current Pokemon graph,        `<GEOM_FUNCTION>` is `geom_col().` 
+    
+    
+    
+* `<COORDINATE_FUNCTION>`: a coordinate system
+    + The `<COORDINATE_FUNCTION>` allows to change coordinate planes and axes. 
+    + Reading our plot might be easier to read if the bars went the other way. For that     we can use `coord_flip()`
+    
+    
+```{r}
+ggplot(data = fitness_df, aes(x = month, y = active_cals)) +
+  geom_col(aes(fill = stepgoal)) +
+  coord_flip()
+```
+    
+    
+*	`<STAT>`: a statistical transformation
+    + The transformation being applied to the geometric object. For example, a histogram     could have a `<STAT>` value of density or count, whichever the user clarifies.
+    
+    
+*	`<POSITION>`: a position adjustment
+    + With `<POSITION>` you can change the placement of certain objects in a graph. 
+    + For example, a stacked bar chart can be changed to side by side through                 `<POSITION>` adjustments.
+    
+```{r}
+ggplot(data = fitness_df, aes(x = month, y = active_cals)) +
+  geom_col(aes(fill = stepgoal), position = "dodge") +
+  coord_flip()
+```
+    
+*	`<FACET_FUNCTION>`: subplots
+    + `<FACET_FUNCTION>`  creates the ability to create subplots, showing more than one         graph at a time.
+
+### Importance of Color and Visual Perception 
+#### From: _Data Visualization: A Practical Introduction_
+
+One thing that is overlooked about Data Visualization is the amount of science that goes into the smallest aspects, such as choosing colors for different variables, or how colors should fade on a scale. It is also important to remember people with color-blindness. If a plot is to be for everyone to learn, the colors must be so too.
+
+In a categorically colored scatter plot, it is important to elect colors and shapes that are differential.
+
+```{r}
+ggplot(fitness_df, aes(x = active_cals, y = distance)) +
+  geom_point(aes(color = weekday))
+ggplot(fitness_df, aes(x = active_cals, y = distance)) +
+  geom_point(aes(color = stepgoal))
+```
+
+
+Different categorical variables will also change how the graph should be colored. We can see there is a much clearer line between the `stepgoal` and `weekday` variables,so the difference in the group is more obvious.
+
+
+It is important to have your colors represent your data. For example, the random selection of colors featured to represent the days of the weeks would not be as applicable to a graph showing numerical differences with colors. Often, this is done with some sliding color scale.
+
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE}
+library(maps)
+state_df <- ggplot2::map_data("state")
+election_df <- read_csv("~/SLU/SP2022/Stat-4005/STAT4005/data/2020_county_pres.csv") %>%
+  group_by(state_name) %>%
+  summarise(total_gop = sum(votes_gop),
+            total_dem = sum(votes_dem)) %>%
+  mutate(percent_gop = 100 * total_gop / (total_gop + total_dem)) %>%
+  mutate(state_name = str_to_lower(state_name))
+
+election_df <- left_join(state_df, election_df, by = c("region" = "state_name"))
+```
+
+```{r}
+ggplot(data = election_df, aes(x = long, y = lat, group = group)) +
+  geom_polygon(aes(fill = total_dem), colour = "black") +
+  coord_map(projection = "albers", lat0 = 39, lat1 = 45) +
+  theme(axis.text = element_blank()) +
+  theme_void() +
+  scale_fill_distiller(type = "div", direction = 1) +
+  labs(title = "Total Number of Democrats")
+```
+
+A plot like this uses a sliding scale to represent the data, because in this case the different points are not separated by clear categories, but rather a range of numbers. 
+
+These are the ways that color vitally important in Data Visualization. The science behind when colors look darker, how our brain perceives empty space depending on surroundings, all of these factors are taken into account by R when making the scales and color selections for plots.
+
+### Data Ethics
+#### From: _Chapter 3 - Data Feminism_
+
+Data ethics are valuable when creating visualizations. Frequently, plots are made to reinforce a preconceived idea. This strategy leads to skewing of axes, points, colors, order of numbers, and many other small features to dupe the viewer. For example, often the time frame of the graph may not be initially evident, changing the first impression the audience has.
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE}
+standings <- read_csv("~/SLU/SP2022/Stat-4005/STAT4005/data/standings.csv")
+
+standings_top <- standings %>%
+  group_by(year)  %>%
+  summarise(wins = max(wins))
+
+standings_top <- standings_top %>%
+  mutate(year = as.factor(year))%>%
+  mutate(year = fct_reorder(.f = year, .x = wins))
+```
+
+```{r}
+ggplot(standings_top, aes(x = year, y = wins)) +
+  geom_col() +
+  labs(title = "Most Wins by every Year in NFL")
+```
+While this graph is rather straightforward, it appears to show some sort of positive growth. While the X-axis is time, it is not representing time sequentially. Tricks like this can trick people in to believing in growth and change trends which really are not there. 
+
+```{r, echo=FALSE,warning=FALSE,message=FALSE}
+standings_pts <- standings %>%
+  group_by(year)  %>%
+  summarise(points_for = mean(points_for))
+
+standings_ptsBIAS <- standings_pts %>%
+  slice(12:20)
+```
+
+```{r}
+ggplot(standings_ptsBIAS, aes(x = year, y = points_for)) +
+  geom_line() +
+  labs(title = "Average Points Scored for NFL Teams by Year")
+```
+
+
+When looking at this graph, the first interpretation is that from 2011 to 2019 the average NFL team only scored 10 more points. This is surprising for a league which is trending towards heavier promotion and advertising of offensive players, and a league which thrives off of high paced offense as an identity. Although it looks like the last 8 years have been stagnant for the NFL, the whole graph shows the story.
+
+
+```{r}
+ggplot(standings_pts, aes(x = year, y = points_for)) +
+  geom_line() +
+  labs(title = "Average Points Scored for NFL Teams by Year")
+```
+
+Clearly, when we look at the whole scope, the NFL is rapidly increasing as an offensive game. The first graph represented another example of Data Ethics which can be broken to lead narratives.
+
+### Conclusion
+Data Feminism wrote about the impact of graphs; how powerful visualizations can turn numbers into feelings. This is true in the sense of well made graphics, but also shows how dangerous of a tool it can be. Many of the plots we see today could be skewed to fit a certain world-view, that is why it is important to be vigilant before assuming the data to be fact.
+
+***
+
+## Section 2 - Mapping
+
+### Introduction
+
+Mapping is an important way to show data as it is truly representitive of areas and the data of said area. Statistical maps have become more popular as technology allows for creation of complex, engaging maps. In this section, we will look into making these maps and how we can optimize them for our liking.
+
+
+### Mapping with `maps`
+
+Using the `maps` tool to map is quite simple. All you need is a dataset that can provide an x value longitude and a y value latitude, and a `geom_polygon().` ggplot2 is built in with many maps already that we can access through `map_data().`
+
+For this, I will be using ggplot2's map_data() along with the `usdata` package. The variables will include `smoke`, the percentage of smokers, `homeowner`, the home ownership rate and `land_area`, the size area wise of the state.
+
+```{r}
+library(tidyverse)
+library(maps)
+df <- ggplot2::map_data("county")
+
+df <- df %>%
+  filter(region == "vermont")
+
+
+ggplot(data = df,
+            mapping = aes(x = long, y = lat,
+                          group = group)) +
+  geom_polygon(fill = "white", colour = "black") +
+  coord_map(projection = "albers", lat0 = 39, lat1 = 45) +
+  theme(axis.text = element_blank()) +
+  theme_void()
+```
+
+Just by filtering down the dfs provided by ggplot, I can get a map of all the counties in Vermont.
+
+Now what is more  important about using these features is displaying data within them.
+
+```{r, echo=FALSE}
+library(usdata)
+state_stats
+state_stats <- state_stats %>% mutate(state = str_to_lower(state))
+state_full <- left_join(state_df, state_stats, by = c("region" = "state"))
+```
+
+```{r}
+ggplot(data = state_full,
+            mapping = aes(x = long, y = lat,
+                          group = group)) +
+  geom_polygon(data = state_full, aes(fill = smoke), color = "black") +
+  coord_map(projection = "albers", lat0 = 39, lat1 = 45) +
+  theme(axis.text = element_blank()) +
+  theme_void() +
+  labs(title = "Percentage of Smokers per State")
+```
+
+Here, after using `long` and `lat` for x and y, we changed the fill of the geom_polygon figure in order to display our chosen statistic in each region. This should work for any region and any variable.
+
+Just because it should work for any variable, does not mean that any variable is a fit to be used for a map. 
+
+```{r}
+ggplot(data = state_full,
+            mapping = aes(x = long, y = lat,
+                          group = group)) +
+  geom_polygon(data = state_full, aes(fill = land_area), color = "black") +
+  coord_map(projection = "albers", lat0 = 39, lat1 = 45) +
+  theme(axis.text = element_blank()) +
+  theme_void() +
+  scale_color_viridis_b() +
+  labs(title = "Land Area per State")
+```
+
+While there are no errors in the code, using the map to graph the size of a state is not very logical. We already can see the sizes of the states on the map, coloring them based on size does not add anything new to the map. While it is exciting to be able to project statistics onto maps, it is not always the best way to represent the data.
+
+### Conclusion
+
+Maps as a form of data visualization is a key part of now and the future of data. Finding new, more accessible and understandable ways to visualize data is always a positive development in the field of statistics. Maps are important because they simplify and make data tangible, they are more popular because there is no axes to interpret, and no complicated statistical elements found in regular graphs.
+
+***
+
+## Section 3 - Variability
+
+### Introduction
+
+Variability is the range of points which fall in a data set. A data set with little variability would follow a straight line, and vice versa for varied data sets. This is imporant because variability is often left out of plots. Medians, means, and maximums are frequently represented as the singular point of a given category. This is a problem as it lacks the display of variability, it doe not show the range of values that could be in the dataset. For this section, we will be using the `airline_safety` data set and the variables which cover the amount of incidents every 5 years
+
+```{r}
+airline_safety <- read_csv("~/SLU/SP2022/Stat-4005/STAT4005/data/airline-safety.csv")
+```
+
+
+### Incorporating Data Variability in Graphs
+
+One reason incorporating variability is important is to prevent outliers from skewing the way the data is visualized. One example of this would be a chart showing the mean value for incidents. 
+
+```{r}
+airline_safety <- airline_safety %>%
+  group_by(airline) %>%
+  mutate(totalfatalities = sum(c(`fatalities 1985_1999`,`fatalities 2000_2014`))) %>%
+  mutate(totalincidents = sum(c(`incidents 1985_1999`,`incidents 2000_2014`)))
+
+airline_safety <- airline_safety %>%
+  group_by(airline)%>%
+  mutate(avginc = totalincidents / 29)%>%
+  mutate(avgfat = totalfatalities / 29)
+
+airline_safety <- airline_safety %>%
+  filter(avginc > .4)
+
+ggplot(data = airline_safety, aes(x = avginc, y = airline)) +
+  geom_col()
+```
+
+This graph here shows the top 15 highest amount of average annual incidents for airlines. Based on the graph, it appears that Aeroflot has more than an incident every year. But if you re-graph it to show both total incidents and the average incident number...
+
+```{r}
+ggplot(data = airline_safety) +
+  geom_point(aes(x = avginc, y = airline, color = "Average Incidents")) +
+  geom_point(aes(x = totalincidents, y = airline, color ="Total Incidents"))
+```
+
+### Conclusion
+
+From this, we can see that we never get the full story of the data just from the average, or one single summary statistic. It is important to look at the range of values that the data set produces before ignoring important data points that you cannot see.
+
+***
+
+## Section 4 - Shiny
+
+### Introduction to Shiny
+
+Shiny is an essential part to creating advanced data visualizations in R. Shiny allows you to create interactive graphs. Frequently this is select which variables to graph, hover over to see which point means which, or type in a certain input in order to continue on the graph. 
+
+We will be using basic shiny to create a static graph, then advance further and create a reactive graph which changes with the user's input.
+
+
+
+```{r}
+library(shiny)
+ui <- fluidPage(
+  textInput("number", "Enter your favorite number"),
+  textOutput("favorite")
+)
+server <- function(input, output, session) {
+  output$favorite <- renderText({
+  paste0("Your favorite number is ", input$number)
+})
+  
+}
+shinyApp(ui, server)
+```
+
+This is a basic Shiny app to show how one can write interactively in Shiny. As you can see, is a UI and a server. The server is where all of the work is done, the calculations, addressing the user changes, creating objects to print. The UI serves as where to type which console objects should appear in the user interface, 
+
+
+### Introduction to Reactivity
+
+Reactivity means that the dataset featured in the Shiny app has to be changed as the user requests it. As options are presented, the user can create a new graph without opening or closing the Shiny window.
+
+```{r, eval=FALSE}
+gv_df <- read_csv("~/SLU/SP2022/Stat-4005/STAT4005/data/gun_violence_us.csv")
+
+library(shiny)
+
+var_choices <- names(gv_df$region)
+
+
+ui <- fluidPage(
+  sidebarLayout(sidebarPanel(
+    selectizeInput("countrychoice",
+                   label = "Choose a Country", 
+                   choices = levels(factor(gv_df$region)),
+    mainPanel(plotOutput("scattergraph"))
+  ),
+    sidebarLayout(sidebarPanel(
+    radioButtons("regionchoice",
+                   label = "Choose a Type of Alcohol", 
+                   choices = var_choices)),
+    mainPanel(plotOutput("histograph"))
+  )
+)
+
+server <- function(input, output, session) {
+  
+  df_sub <- reactive({
+    gv_df %>% filter(region == input$region)
+  })
+  
+  scatter_plot <- reactive({
+    ggplot(alcohol_df, aes(x = ownership_rate, y = mortality_rate)) +
+      geom_point(colour = "black", fill = "white", bins = 15) +
+      geom_point(data = df_sub(), aes(x = ownership_rate, y = mortality_rate,
+                                      color = region)) +
+      geom_text(data = df_sub(), aes(label = country), hjust=0, vjust=0)
+  })
+  
+  
+  output$scattergraph <- renderPlot({
+    scatter_plot()
+  })
+  
+  
+}
+
+shinyApp(ui, server)
+```
+
+
+### Conclusion
+
+In all, Shiny presents users with the option to create graphs with much more options than regular ggplot graphs. Shiny allows you to change all of the elements of the graph instantly, create custom graphs instantly. Shiny also allows for statisticians to create cool applications to share with students, other scholars, or the general public. 
+
+
+***
+
+***
